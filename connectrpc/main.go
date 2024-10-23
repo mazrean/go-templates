@@ -8,7 +8,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := app.Run(":8080"); err != nil {
+	if err := app.Run(); err != nil {
 		panic(err)
 	}
 }

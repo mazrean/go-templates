@@ -3,25 +3,36 @@ package di
 import (
 	"fmt"
 
+	"github.com/mazrean/go-templates/connectrpc/internal/config"
 	"github.com/mazrean/go-templates/connectrpc/internal/router"
 	"go.uber.org/dig"
 )
 
 type App struct {
-	*router.Router
+	config *config.Config
+	router *router.Router
+}
+
+func (a *App) Run() error {
+	return a.router.Run(a.config.Addr)
 }
 
 func DI() (*App, error) {
 	c := dig.New()
+
+	if err := c.Provide(config.NewConfig); err != nil {
+		return nil, fmt.Errorf("failed to provide config: %w", err)
+	}
 
 	if err := routerDI(c); err != nil {
 		return nil, fmt.Errorf("failed to inject router: %w", err)
 	}
 
 	var app *App
-	err := c.Invoke(func(r *router.Router) {
+	err := c.Invoke(func(c *config.Config, r *router.Router) {
 		app = &App{
-			Router: r,
+			config: c,
+			router: r,
 		}
 	})
 	if err != nil {
