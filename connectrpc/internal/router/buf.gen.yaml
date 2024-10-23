@@ -1,0 +1,13 @@
+version: v2
+plugins:
+  - local: protoc-gen-go
+    out: protogen
+    opt: paths=source_relative
+  - local: protoc-gen-connect-go
+    out: protogen
+    opt: paths=source_relative
+managed:
+  enabled: true
+  override:
+    - file_option: go_package
+      value: github.com/mazrean/go-templates/connectrpc/internal/router/protogen/protobuf;protogen
