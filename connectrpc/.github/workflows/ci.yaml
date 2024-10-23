@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go build -o app
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: mkdir -p /tmp/coverage
+      - name: Run test
+        run: go test ./src/... -v -coverprofile=/tmp/coverage/coverage.txt -race -vet=off
+      - name: Upload coverage data
+        uses: codecov/codecov-action@v4.6.0
+        with:
+          file: /tmp/coverage/coverage.txt
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage.txt
+          path: /tmp/coverage/coverage.txt
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # go generate用に、golangci-lintの前にGoのinstallをする
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2.6
+        with:
+          go_version_file: go.mod
+          reporter: github-pr-check
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+  gencheck:
+    name: Generate Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go generate ./...
+      - run: git diff --exit-code
