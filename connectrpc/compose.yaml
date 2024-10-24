@@ -10,3 +10,8 @@ services:
       watch:
         - action: rebuild
           path: .
+    healthcheck:
+      test: ["CMD", "/bin/grpc-health-probe", "-addr=:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
