@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mazrean/go-templates/connectrpc/internal/config"
+	"github.com/mazrean/go-templates/connectrpc/internal/pkg/log"
 	"github.com/mazrean/go-templates/connectrpc/internal/router"
 	"go.uber.org/dig"
 )
@@ -30,6 +31,8 @@ func DI() (*App, error) {
 
 	var app *App
 	err := c.Invoke(func(c *config.Config, r *router.Router) {
+		log.Setup(c.Debug)
+
 		app = &App{
 			config: c,
 			router: r,

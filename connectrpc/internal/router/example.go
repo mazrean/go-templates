@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"connectrpc.com/connect"
 	protogen "github.com/mazrean/go-templates/connectrpc/internal/router/protogen/protobuf"
@@ -19,8 +18,6 @@ func NewExample() *Example {
 }
 
 func (g *Example) Greet(ctx context.Context, req *connect.Request[protogen.GreetRequest]) (*connect.Response[protogen.GreetResponse], error) {
-	log.Println("Request headers: ", req.Header())
-
 	res := connect.NewResponse(&protogen.GreetResponse{
 		Greeting: fmt.Sprintf("Hello, %s!", req.Msg.Name),
 	})

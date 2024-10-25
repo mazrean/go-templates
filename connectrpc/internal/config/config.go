@@ -13,6 +13,7 @@ import (
 var defaultConfig []byte
 
 type Config struct {
+	Debug bool
 	// Addr is the address to listen on.
 	Addr string
 }

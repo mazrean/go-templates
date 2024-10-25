@@ -12,3 +12,8 @@ gonew github.com/mazrean/go-templates/connectrpc your.domain/myprog
 ```bash
 docker compose watch
 ```
+
+## After Updating the Proto File
+```bash
+go generate ./...
+```
